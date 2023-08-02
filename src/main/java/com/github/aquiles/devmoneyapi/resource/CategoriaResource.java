@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class CategoriaResource {
     // ****    POST MAPPING    *****
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Categoria save(@RequestBody Categoria categoria, HttpServletResponse response){
+    public Categoria save(@RequestBody @Valid Categoria categoria, HttpServletResponse response){
         Categoria newCategoria = repository.save(categoria);
 
         URI uri = ServletUriComponentsBuilder
