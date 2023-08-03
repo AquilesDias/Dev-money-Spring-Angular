@@ -20,7 +20,7 @@ public class PessoaResource {
 
     private final PessoaRepository repository;
 
-    //    ****    GET POST    ****
+    //    ****    METHOD POST    ****
     @GetMapping
     public List<Pessoa> findAll(){
         return repository.findAll();
@@ -35,8 +35,7 @@ public class PessoaResource {
         return pessoa;
     }
 
-
-    //    ****    GET POST    ****
+    //    ****    METHOD POST    ****
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Pessoa save(@RequestBody @Valid Pessoa pessoa, HttpServletResponse response){
@@ -49,4 +48,42 @@ public class PessoaResource {
 
         return newPessoa;
     }
+
+    //    ****    METHOD DELETE    ****
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("{cod}")
+    public void updatePessoa(@RequestBody Pessoa pessoa, @PathVariable Long cod){
+
+        repository
+                .findById(cod)
+                .map(c -> {
+                    pessoa.setCod(c.getCod());
+                    return repository.save(pessoa);
+                }).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pessoa não encontrado"));
+
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("{cod}/ativar")
+    public void updatePropriedadePessoa(@RequestBody Boolean ativo, @PathVariable Long cod){
+        Pessoa updatePropriedade = repository
+                .findById(cod)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pessoa inexistente."));
+
+        updatePropriedade.setAtivo(ativo);
+        repository.save(updatePropriedade);
+    }
+
+    //    ****    METHOD DELETE    ****
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("{cod}")
+    public void delete(@PathVariable Long cod){
+
+        Pessoa pessoa = repository
+                .findById(cod)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pessoa inexistente."));
+
+        repository.delete(pessoa);
+    }
+
 }
