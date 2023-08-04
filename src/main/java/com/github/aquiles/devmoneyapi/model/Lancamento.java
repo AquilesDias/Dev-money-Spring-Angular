@@ -1,5 +1,6 @@
 package com.github.aquiles.devmoneyapi.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.aquiles.devmoneyapi.model.enums.TipoLancamento;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class Lancamento {
     private String descricao;
     private String observacao;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "data_vencimento")
     private Date dataVencimento;
 
@@ -33,6 +35,7 @@ public class Lancamento {
     private BigDecimal valor;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_lancamento")
     private TipoLancamento tipoLancamento;
 
     @ManyToOne
