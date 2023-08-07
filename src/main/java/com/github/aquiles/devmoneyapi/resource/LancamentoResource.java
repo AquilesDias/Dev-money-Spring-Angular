@@ -2,7 +2,9 @@ package com.github.aquiles.devmoneyapi.resource;
 
 import com.github.aquiles.devmoneyapi.model.Lancamento;
 import com.github.aquiles.devmoneyapi.repositories.LancamentoRepository;
+import com.github.aquiles.devmoneyapi.service.LancamentoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,36 +20,26 @@ import java.util.List;
 public class LancamentoResource {
 
     private final LancamentoRepository repository;
+    @Autowired
+    private LancamentoService service;
 
 
     //    ****    METHOD GET    ****
     @GetMapping
     public List<Lancamento> findAll(){
-        return repository.findAll();
+        return service.findAll();
     }
 
     @GetMapping("{cod}")
     public Lancamento findById(@PathVariable Long cod) {
-
-        return repository
-                .findById(cod)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lançamento não encontrado."));
+        return service.findById(cod);
     }
 
     //    ****    METHOD POST    ****
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Lancamento save(@RequestBody Lancamento lancamento, HttpServletResponse response){
-        Lancamento newLancamento = repository.save(lancamento);
-
-        URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequestUri()
-                .path("/{cod}")
-                .buildAndExpand(newLancamento.getCod()).toUri();
-
-        response.setHeader("Location", uri.toASCIIString());
-
-        return newLancamento;
+        return service.save(lancamento, response);
     }
 
 }
