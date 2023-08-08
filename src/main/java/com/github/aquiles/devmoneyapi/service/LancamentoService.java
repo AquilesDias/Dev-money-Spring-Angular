@@ -1,7 +1,11 @@
 package com.github.aquiles.devmoneyapi.service;
 
+import com.github.aquiles.devmoneyapi.exception.PessoaInexistenteOuInativaException;
 import com.github.aquiles.devmoneyapi.model.Lancamento;
+import com.github.aquiles.devmoneyapi.model.Pessoa;
 import com.github.aquiles.devmoneyapi.repositories.LancamentoRepository;
+import com.github.aquiles.devmoneyapi.repositories.PessoaRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,10 +17,14 @@ import java.net.URI;
 import java.util.List;
 
 @Service
+@Slf4j
 public class LancamentoService {
 
     @Autowired
     private LancamentoRepository repository;
+
+    @Autowired
+    PessoaRepository repositoryPessoa;
 
     public Lancamento findById(Long cod){
       return repository.findById(cod).orElseThrow(
@@ -28,13 +36,21 @@ public class LancamentoService {
     }
 
     public Lancamento save(Lancamento lancamento, HttpServletResponse response){
-        Lancamento newLancamento = repository.save(lancamento);
+
+        Pessoa pessoa = repositoryPessoa
+                .findById(lancamento.getPessoa().getCod())
+                .orElseThrow(() -> new RuntimeException("Pessoa não encontrada!"));
+
+        if(pessoa == null || pessoa.isAtivo() ){
+            throw new PessoaInexistenteOuInativaException("Pessoa inexistente ou inativa!");
+        }
+
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequestUri()
                 .path("/{cod}")
-                .buildAndExpand(newLancamento.getCod()).toUri();
+                .buildAndExpand(lancamento.getCod()).toUri();
         response.setHeader("Location", uri.toASCIIString());
 
-        return newLancamento;
+        return repository.save(lancamento);
     }
 }

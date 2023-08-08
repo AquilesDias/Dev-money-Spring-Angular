@@ -1,5 +1,6 @@
 package com.github.aquiles.devmoneyapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,5 +27,11 @@ public class Pessoa {
 
     @Embedded
     private Endereco endereco;
+
+    @JsonIgnore
+    @Transient
+    public boolean isAtivo(){
+       return !this.ativo;
+    }
 
 }
