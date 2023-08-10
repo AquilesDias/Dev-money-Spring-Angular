@@ -29,6 +29,7 @@ public class Lancamento {
     @Column(name = "data_vencimento")
     private Date dataVencimento;
 
+    @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "data_pagamento")
     private Date dataPagamento;
 

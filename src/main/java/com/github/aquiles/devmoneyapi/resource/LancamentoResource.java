@@ -2,6 +2,7 @@ package com.github.aquiles.devmoneyapi.resource;
 
 import com.github.aquiles.devmoneyapi.model.Lancamento;
 import com.github.aquiles.devmoneyapi.repositories.LancamentoRepository;
+import com.github.aquiles.devmoneyapi.repositories.filter.LancamentoFilter;
 import com.github.aquiles.devmoneyapi.service.LancamentoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,8 @@ public class LancamentoResource {
 
     //    ****    METHOD GET    ****
     @GetMapping
-    public List<Lancamento> findAll(){
-        return service.findAll();
+    public List<Lancamento> pesquisar(LancamentoFilter filter){
+        return repository.filtrar(filter);
     }
 
     @GetMapping("{cod}")
