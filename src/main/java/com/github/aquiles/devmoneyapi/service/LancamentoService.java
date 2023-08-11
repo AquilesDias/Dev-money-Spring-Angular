@@ -53,4 +53,9 @@ public class LancamentoService {
 
         return repository.save(lancamento);
     }
+
+    public void deleteLancamento(Long cod){
+        Lancamento lancamento = findById(cod);
+        repository.delete(lancamento);
+    }
 }
