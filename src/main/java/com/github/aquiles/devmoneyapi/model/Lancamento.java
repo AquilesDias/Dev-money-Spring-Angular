@@ -47,4 +47,17 @@ public class Lancamento {
     @JoinColumn(name = "codigo_categoria")
     private Categoria categoria;
 
+
+    public Lancamento(Long cod, String descricao, Date dataVencimento, Date dataPagamento,
+                      BigDecimal valor, TipoLancamento tipoLancamento, Pessoa pessoa, Categoria categoria) {
+
+        this.cod = cod;
+        this.descricao = descricao;
+        this.dataVencimento = dataVencimento;
+        this.dataPagamento = dataPagamento;
+        this.valor = valor;
+        this.tipoLancamento = tipoLancamento;
+        this.pessoa = pessoa;
+        this.categoria = categoria;
+    }
 }

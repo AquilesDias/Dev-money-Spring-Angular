@@ -3,6 +3,7 @@ package com.github.aquiles.devmoneyapi.resource;
 import com.github.aquiles.devmoneyapi.model.Lancamento;
 import com.github.aquiles.devmoneyapi.repositories.LancamentoRepository;
 import com.github.aquiles.devmoneyapi.repositories.filter.LancamentoFilter;
+import com.github.aquiles.devmoneyapi.repositories.projection.ResumoLancamento;
 import com.github.aquiles.devmoneyapi.service.LancamentoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("api/lancamentos")
 public class LancamentoResource {
@@ -32,6 +34,11 @@ public class LancamentoResource {
     @GetMapping("{cod}")
     public Lancamento findById(@PathVariable Long cod) {
         return service.findById(cod);
+    }
+
+    @GetMapping(params = "resumo")
+    public Page<ResumoLancamento> lancamentoResumo(LancamentoFilter filter, Pageable pageable){
+        return repository.resumo(filter, pageable);
     }
 
     //    ****    METHOD POST    ****

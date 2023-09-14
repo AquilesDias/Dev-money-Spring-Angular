@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("api/pessoas")
 public class PessoaResource {

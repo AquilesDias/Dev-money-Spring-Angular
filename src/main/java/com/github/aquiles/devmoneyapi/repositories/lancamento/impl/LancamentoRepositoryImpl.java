@@ -1,8 +1,13 @@
 package com.github.aquiles.devmoneyapi.repositories.lancamento.impl;
 
 import com.github.aquiles.devmoneyapi.model.Lancamento;
+import com.github.aquiles.devmoneyapi.model.Lancamento_;
+import com.github.aquiles.devmoneyapi.model.Pessoa_;
+import com.github.aquiles.devmoneyapi.model.Categoria_;
 import com.github.aquiles.devmoneyapi.repositories.filter.LancamentoFilter;
 import com.github.aquiles.devmoneyapi.repositories.lancamento.LancamentoRepositoryQuery;
+import com.github.aquiles.devmoneyapi.repositories.projection.ResumoLancamento;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -18,6 +23,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
 
     @PersistenceContext
@@ -40,7 +46,36 @@ public class LancamentoRepositoryImpl implements LancamentoRepositoryQuery {
         return new PageImpl<>(query.getResultList(),pageable, total(lancamentoFilter));
     }
 
-    private void addRestricoesDePaginacao(TypedQuery<Lancamento> query, Pageable pageable) {
+    @Override
+    public Page<ResumoLancamento> resumo(LancamentoFilter lancamentoFilter, Pageable pageable) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<ResumoLancamento> criteria = builder.createQuery(ResumoLancamento.class);
+        Root<Lancamento> root = criteria.from(Lancamento.class);
+
+        criteria.select(
+                builder.construct(ResumoLancamento.class,
+                    root.get(Lancamento_.cod),
+                    root.get(Lancamento_.descricao),
+                    root.get(Lancamento_.dataVencimento),
+                    root.get(Lancamento_.dataPagamento),
+                    root.get(Lancamento_.valor),
+                    root.get(Lancamento_.tipoLancamento),
+                    root.get(Lancamento_.pessoa).get(Pessoa_.nome),
+                    root.get(Lancamento_.categoria).get(Categoria_.name)
+                ));
+
+        Predicate[] predicates = criarRestricoes(lancamentoFilter, builder, root);
+        criteria.where(predicates);
+
+        TypedQuery<ResumoLancamento> query = entityManager.createQuery(criteria);
+        addRestricoesDePaginacao(query, pageable);
+
+        return new PageImpl<>(query.getResultList(), pageable, total(lancamentoFilter));
+    }
+
+
+    private void addRestricoesDePaginacao(TypedQuery<?> query, Pageable pageable) {
             int paginaAtual = pageable.getPageNumber();
             int registrosPorPagina = pageable.getPageSize();
             int primeiroRegistroDaPag = paginaAtual * registrosPorPagina;
