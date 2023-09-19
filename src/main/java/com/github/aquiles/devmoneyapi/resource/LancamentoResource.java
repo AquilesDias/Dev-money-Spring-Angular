@@ -1,5 +1,7 @@
 package com.github.aquiles.devmoneyapi.resource;
 
+import com.github.aquiles.devmoneyapi.dto.LancamentoEstatisticaCategoria;
+import com.github.aquiles.devmoneyapi.dto.LancamentoEstatisticaDia;
 import com.github.aquiles.devmoneyapi.model.Lancamento;
 import com.github.aquiles.devmoneyapi.repositories.LancamentoRepository;
 import com.github.aquiles.devmoneyapi.repositories.filter.LancamentoFilter;
@@ -13,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
+import java.util.List;
 
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
@@ -34,6 +38,16 @@ public class LancamentoResource {
     @GetMapping("{cod}")
     public Lancamento findById(@PathVariable Long cod) {
         return service.findById(cod);
+    }
+
+    @GetMapping("estatisticas/por-categoria")
+    public List<LancamentoEstatisticaCategoria> porCategoria(){
+        return repository.porCategoria(LocalDate.now());
+    }
+
+    @GetMapping("estatisticas/por-dia")
+    public List<LancamentoEstatisticaDia> porDia(){
+        return repository.porDia(LocalDate.now().withDayOfMonth(1));
     }
 
     @GetMapping(params = "resumo")

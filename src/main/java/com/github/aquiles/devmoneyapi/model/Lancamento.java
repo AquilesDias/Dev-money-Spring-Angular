@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -27,11 +28,11 @@ public class Lancamento {
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "data_vencimento")
-    private Date dataVencimento;
+    private LocalDate dataVencimento;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Column(name = "data_pagamento")
-    private Date dataPagamento;
+    private LocalDate dataPagamento;
 
     private BigDecimal valor;
 
@@ -48,7 +49,7 @@ public class Lancamento {
     private Categoria categoria;
 
 
-    public Lancamento(Long cod, String descricao, Date dataVencimento, Date dataPagamento,
+    public Lancamento(Long cod, String descricao, LocalDate dataVencimento, LocalDate dataPagamento,
                       BigDecimal valor, TipoLancamento tipoLancamento, Pessoa pessoa, Categoria categoria) {
 
         this.cod = cod;
